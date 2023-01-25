@@ -2,15 +2,21 @@ package com.example.restspring;
 
 
 
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.apache.tomcat.util.json.JSONParser;
+import org.apache.tomcat.util.json.ParseException;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 
 @RestController
 public class GreetingController {
@@ -19,34 +25,25 @@ public class GreetingController {
     private final AtomicLong counter = new AtomicLong();
 
     @GetMapping("/greeting")
-    public Greeting greeting(@RequestParam(value = "name", defaultValue = "World") String name) {
-        JSONArray peliculasArray = new JSONArray();
-        JSONObject jsonPeliculas = new JSONObject();
+    public Greeting greeting(@RequestParam(value = "name", defaultValue = "World") String name)  {
+        return new Greeting(counter.incrementAndGet(),template);
+   }
 
-        JSONObject pelicula1 = new JSONObject();
-        pelicula1.put("id", 1);
-        pelicula1.put("nombre", "El sexto sentido");
-        pelicula1.put("director", "M. Night Shyamalan");
-        pelicula1.put("clasificacion", "Drama");
-        peliculasArray.put(pelicula1);
 
-        JSONObject pelicula2 = new JSONObject();
-        pelicula2.put("id", 2);
-        pelicula2.put("nombre", "Pulp Fiction");
-        pelicula2.put("director", "Tarantino");
-        pelicula2.put("clasificacion", "Acción");
-        peliculasArray.put(pelicula2);
 
-        JSONObject pelicula3 = new JSONObject();
-        pelicula3.put("id", 3);
-        pelicula3.put("nombre", "Todo Sobre Mi Madre");
-        pelicula3.put("director", "Almodobar");
-        pelicula3.put("clasificacion", "Drama");
-        peliculasArray.put(pelicula3);
+    @GetMapping("/pelicula/{id}")
+    public ResponseEntity<String> pelicula(@PathVariable int id) throws IOException {
 
-        jsonPeliculas.put("peliculas",peliculasArray);
-        Greeting greting=new Greeting(1,jsonPeliculas.toString());
-
-        return greting;
+        String jsonString = new String(Files.readAllBytes(Paths.get("src/main/resources/datos.json")));
+        JSONObject jsonObject = new JSONObject(jsonString);
+        JSONArray peliculasArray = jsonObject.getJSONArray("peliculas");
+        JSONObject movie = peliculasArray.getJSONObject(id);
+        return new ResponseEntity<>(movie.toString(), HttpStatus.OK);
     }
+
+
+
+
+
+
 }
