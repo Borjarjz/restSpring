@@ -32,13 +32,13 @@ public class GreetingController {
 
 
     @GetMapping("/pelicula/{id}")
-    public ResponseEntity<String> pelicula(@PathVariable int id) throws IOException {
+    public ResponseEntity<JSONObject> pelicula(@PathVariable int id) throws IOException {
 
         String jsonString = new String(Files.readAllBytes(Paths.get("src/main/resources/datos.json")));
         JSONObject jsonObject = new JSONObject(jsonString);
         JSONArray peliculasArray = jsonObject.getJSONArray("peliculas");
         JSONObject movie = peliculasArray.getJSONObject(id);
-        return new ResponseEntity<>(movie.toString(), HttpStatus.OK);
+        return new ResponseEntity<>(movie, HttpStatus.OK);
     }
 
 
