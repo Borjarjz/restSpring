@@ -13,7 +13,9 @@ import org.apache.tomcat.util.json.JSONParser;
 import org.apache.tomcat.util.json.ParseException;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,8 +40,9 @@ public class GreetingController {
         JSONObject jsonObject = new JSONObject(jsonString);
         JSONArray peliculasArray = jsonObject.getJSONArray("peliculas");
         JSONObject movie = peliculasArray.getJSONObject(id);
-
-        return new ResponseEntity<>(movie.toString(), HttpStatus.OK);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        return new ResponseEntity<>(movie.toString(), headers, HttpStatus.OK);
 
     }
 
