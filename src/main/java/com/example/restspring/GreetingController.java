@@ -26,14 +26,14 @@ public class GreetingController {
     private static final String template = "Hello, %s!";
     private final AtomicLong counter = new AtomicLong();
 
-    @GetMapping("/greeting")
+    @GetMapping("/greeting")//El método greeting recibe un parámetro de nombre y devuelve un objeto Greeting.
     public Greeting greeting(@RequestParam(value = "name", defaultValue = "World") String name)  {
         return new Greeting(counter.incrementAndGet(),template);
    }
 
 
 
-    @GetMapping("/pelicula/{id}")
+    @GetMapping("/pelicula/{id}")// El método pelicula recibe un parámetro de id e intenta leer un archivo JSON para obtener información de una película, devolviendo una respuesta con los datos obtenidos en funcion del id puesto en la URL.
     public ResponseEntity<String> pelicula(@PathVariable int id) throws IOException {
 
         String jsonString = new String(Files.readAllBytes(Paths.get("src/main/resources/datos.json")));
